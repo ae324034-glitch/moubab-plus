@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>مبوب بلس</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial,Tahoma,sans-serif;
+background:#f5f7fa;
+color:#17324d
+}
+
+header{
+background:#1261D6;
+color:#fff;
+padding:22px 15px;
+text-align:center
+}
+
+.logo{
+font-size:30px;
+font-weight:bold
+}
+
+.sub{
+margin-top:7px;
+font-size:14px
+}
+
+.search{
+padding:15px;
+background:#fff
+}
+
+.search input,
+select{
+width:100%;
+padding:13px;
+border:1px solid #ddd;
+border-radius:10px;
+font-size:16px;
+background:#fff
+}
+
+.categories{
+background:#FFD21F;
+padding:12px;
+display:flex;
+gap:8px;
+overflow-x:auto
+}
+
+.category{
+border:0;
+background:#fff;
+padding:10px 16px;
+border-radius:20px;
+white-space:nowrap;
+cursor:pointer
+}
+
+.section{
+padding:15px
+}
+
+.title{
+font-size:21px;
+font-weight:bold;
+margin-bottom:12px
+}
+
+.status{
+padding:10px;
+text-align:center;
+font-size:14px
+}
+
+.ads{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px
+}
+
+.card{
+background:#fff;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 2px 8px #00000012
+}
+
+.card img{
+width:100%;
+height:145px;
+object-fit:cover;
+background:#eee
+}
+
+.noimg{
+height:145px;
+background:#e9edf2;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#777
+}
+
+.info{
+padding:10px
+}
+
+.name{
+font-weight:bold;
+margin-bottom:8px
+}
+
+.price{
+font-weight:bold;
+color:#0E7A3E
+}
+
+.empty{
+background:#fff;
+padding:25px;
+border-radius:12px;
+text-align:center
+}
+
+footer{
+margin-top:30px;
+padding:25px;
+background:#1261D6;
+color:#fff;
+text-align:center
+}
+
+@media(min-width:700px){
+.ads{
+grid-template-columns:repeat(4,1fr)
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">مبوب بلس</div>
+<div class="sub">منصة الإعلانات والتجارة الإلكترونية</div>
+</header>
+
+<div class="search">
+
+<input
+id="search"
+type="search"
+placeholder="ابحث عن سيارة، عقار، هاتف..."
+>
+
+<br><br>
+
+<select id="city">
+<option value="">جميع المدن</option>
+</select>
+
+</div>
+
+<div id="categories" class="categories">
+<button class="category">جاري تحميل الأقسام...</button>
+</div>
+
+<div id="status" class="status">
+جاري الاتصال بقاعدة البيانات...
+</div>
+
+<section class="section">
+
+<div class="title">أحدث الإعلانات</div>
+
+<div id="ads" class="ads">
+<div class="empty">جاري تحميل الإعلانات...</div>
+</div>
+
+</section>
+
+<footer>
+مبوب بلس © 2026
+</footer>
+
+<script>
+
+const URL =
+"https://czubbmceykojyodxjhr.supabase.co";
+
+const KEY =
+"sb_publishable_qPdQ78gETsWWgJ50OS8NQw_T16TXrky";
+
+let allAds=[];
+
+function headers(){
+return{
+"apikey":KEY,
+"Authorization":"Bearer "+KEY
+};
+}
+
+
+async function loadCategories(){
+
+try{
+
+const r=await fetch(
+URL+"/rest/v1/categories?select=id,name&is_active=eq.true&order=name",
+{headers:headers()}
+);
+
+if(!r.ok) throw new Error("HTTP "+r.status);
+
+const data=await r.json();
+
+const box=document.getElementById("categories");
+
+box.innerHTML="";
+
+data.forEach(function(x){
+
+const b=document.createElement("button");
+
+b.className="category";
+b.textContent=x.name;
+
+b.onclick=function(){
+
+document.querySelectorAll(".category")
+.forEach(function(c){
+c.style.fontWeight="normal";
+});
+
+b.style.fontWeight="bold";
+
+showAds(
+allAds.filter(function(ad){
+return ad.category_id===x.id;
+})
+);
+
+};
+
+box.appendChild(b);
+
+});
+
+}catch(e){
+
+document.getElementById("categories").innerHTML=
+'<button class="category">تعذر تحميل الأقسام</button>';
+
+}
+
+}
+
+
+async function loadCities(){
+
+try{
+
+const r=await fetch(
+URL+"/rest/v1/cities?select=id,name&is_active=eq.true&order=name",
+{headers:headers()}
+);
+
+if(!r.ok) throw new Error("HTTP "+r.status);
+
+const data=await r.json();
+
+const select=document.getElementById("city");
+
+data.forEach(function(x){
+
+const option=document.createElement("option");
+
+option.value=x.id;
+option.textContent=x.name;
+
+select.appendChild(option);
+
+});
+
+select.onchange=function(){
+
+const id=this.value;
+
+if(!id){
+showAds(allAds);
+return;
+}
+
+showAds(
+allAds.filter(function(ad){
+return ad.city_id===id;
+})
+);
+
+};
+
+}catch(e){
+
+document.getElementById("city").innerHTML=
+'<option value="">تعذر تحميل المدن</option>';
+
+}
+
+}
+
+
+async function loadAds(){
+
+try{
+
+const r=await fetch(
+URL+
+"/rest/v1/ads?select=id,title,price,currency,description,category_id,city_id,ad_images(image_url,sort_order)&status=eq.approved&order=created_at.desc",
+{headers:headers()}
+);
+
+if(!r.ok) throw new Error("HTTP "+r.status);
+
+allAds=await r.json();
+
+showAds(allAds);
+
+document.getElementById("status").textContent=
+"تم الاتصال بنجاح — عدد الإعلانات: "+allAds.length;
+
+}catch(e){
+
+document.getElementById("status").textContent=
+"تعذر الاتصال بقاعدة البيانات";
+
+document.getElementById("ads").innerHTML=
+'<div class="empty">تعذر تحميل الإعلانات</div>';
+
+}
+
+}
+
+
+function showAds(list){
+
+const box=document.getElementById("ads");
+
+if(!list.length){
+
+box.innerHTML=
+'<div class="empty">لا توجد إعلانات في هذا القسم</div>';
+
+return;
+
+}
+
+box.innerHTML="";
+
+list.forEach(function(ad){
+
+const card=document.createElement("div");
+
+card.className="card";
+
+let image="";
+
+if(
+ad.ad_images &&
+ad.ad_images.length &&
+ad.ad_images[0].image_url
+){
+
+image=
+'<img src="'+
+escapeHtml(ad.ad_images[0].image_url)+
+'" alt="">';
+
+}else{
+
+image='<div class="noimg">مبوب بلس</div>';
+
+}
+
+card.innerHTML=
+image+
+'<div class="info">'+
+'<div class="name">'+
+escapeHtml(ad.title)+
+'</div>'+
+'<div class="price">'+
+escapeHtml(ad.price)+" "+
+escapeHtml(ad.currency)+
+'</div>'+
+'</div>';
+
+box.appendChild(card);
+
+});
+
+}
+
+
+document.getElementById("search")
+.addEventListener("input",function(){
+
+const q=this.value.toLowerCase().trim();
+
+if(!q){
+
+showAds(allAds);
+return;
+
+}
+
+showAds(
+allAds.filter(function(ad){
+
+return(
+String(ad.title||"").toLowerCase().includes(q) ||
+String(ad.description||"").toLowerCase().includes(q)
+);
+
+})
+);
+
+});
+
+
+function escapeHtml(value){
+
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+loadCategories();
+loadCities();
+loadAds();
+
+</script>
+
+</body>
+</html>
