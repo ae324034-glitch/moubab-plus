@@ -3,455 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
+<meta name="theme-color" content="#FFD21F">
 <title>مبوب بلس</title>
-
 <style>
 *{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Arial,Tahoma,sans-serif;
-background:#f5f7fa;
-color:#17324d
-}
-
-header{
-background:#1261D6;
-color:#fff;
-padding:22px 15px;
-text-align:center
-}
-
-.logo{
-font-size:30px;
-font-weight:bold
-}
-
-.sub{
-margin-top:7px;
-font-size:14px
-}
-
-.search{
-padding:15px;
-background:#fff
-}
-
-.search input,
-select{
-width:100%;
-padding:13px;
-border:1px solid #ddd;
-border-radius:10px;
-font-size:16px;
-background:#fff
-}
-
-.categories{
-background:#FFD21F;
-padding:12px;
-display:flex;
-gap:8px;
-overflow-x:auto
-}
-
-.category{
-border:0;
-background:#fff;
-padding:10px 16px;
-border-radius:20px;
-white-space:nowrap;
-cursor:pointer
-}
-
-.section{
-padding:15px
-}
-
-.title{
-font-size:21px;
-font-weight:bold;
-margin-bottom:12px
-}
-
-.status{
-padding:10px;
-text-align:center;
-font-size:14px
-}
-
-.ads{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px
-}
-
-.card{
-background:#fff;
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 2px 8px #00000012
-}
-
-.card img{
-width:100%;
-height:145px;
-object-fit:cover;
-background:#eee
-}
-
-.noimg{
-height:145px;
-background:#e9edf2;
-display:flex;
-align-items:center;
-justify-content:center;
-color:#777
-}
-
-.info{
-padding:10px
-}
-
-.name{
-font-weight:bold;
-margin-bottom:8px
-}
-
-.price{
-font-weight:bold;
-color:#0E7A3E
-}
-
-.empty{
-background:#fff;
-padding:25px;
-border-radius:12px;
-text-align:center
-}
-
-footer{
-margin-top:30px;
-padding:25px;
-background:#1261D6;
-color:#fff;
-text-align:center
-}
-
-@media(min-width:700px){
-.ads{
-grid-template-columns:repeat(4,1fr)
-}
-}
+body{margin:0;font-family:Arial,Tahoma,sans-serif;background:#f5f7fa;color:#17324d}
+header{background:#1261D6;color:#fff;padding:22px 15px;text-align:center}
+.logo{font-size:30px;font-weight:bold}.sub{margin-top:7px;font-size:14px}
+.search{padding:15px;background:#fff;display:grid;gap:10px}
+.search input,.search select{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size:16px;background:#fff;color:#17324d}
+.categories{background:#FFD21F;padding:12px;display:flex;gap:8px;overflow-x:auto}
+.category{border:0;background:#fff;padding:10px 16px;border-radius:20px;white-space:nowrap;cursor:pointer;color:#17324d}
+.category.active{background:#1261D6;color:#fff;font-weight:bold}
+.section{padding:15px}.title{font-size:21px;font-weight:bold;margin-bottom:12px}
+.status{padding:10px;text-align:center;font-size:14px;white-space:pre-wrap;line-height:1.6}.status.error{color:#9c2020;background:#fff0f0}
+.ads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #00000012;min-width:0}
+.card img{width:100%;height:145px;object-fit:cover;background:#eee;display:block}
+.noimg{height:145px;background:#e9edf2;display:flex;align-items:center;justify-content:center;color:#777}
+.info{padding:10px}.name{font-weight:bold;margin-bottom:8px;overflow-wrap:anywhere}.price{font-weight:bold;color:#0E7A3E}.description{font-size:13px;line-height:1.6;color:#617286;margin:7px 0 0;overflow-wrap:anywhere}
+.empty{background:#fff;padding:25px;border-radius:12px;text-align:center;grid-column:1/-1;line-height:1.7}
+footer{margin-top:30px;padding:25px;background:#1261D6;color:#fff;text-align:center}
+@media(min-width:700px){.ads{grid-template-columns:repeat(4,minmax(0,1fr))}.card img,.noimg{height:180px}.search{grid-template-columns:2fr 1fr}}
 </style>
 </head>
-
 <body>
-
-<header>
-<div class="logo">مبوب بلس</div>
-<div class="sub">منصة الإعلانات والتجارة الإلكترونية</div>
-</header>
-
+<header><div class="logo">مبوب بلس</div><div class="sub">منصة الإعلانات والتجارة الإلكترونية في المغرب</div></header>
 <div class="search">
-
-<input
-id="search"
-type="search"
-placeholder="ابحث عن سيارة، عقار، هاتف..."
->
-
-<br><br>
-
-<select id="city">
-<option value="">جميع المدن</option>
-</select>
-
+<input id="search" type="search" placeholder="ابحث عن سيارة، عقار، هاتف..." aria-label="البحث عن إعلان">
+<select id="city" aria-label="اختر المدينة"><option value="">جميع المدن</option></select>
 </div>
-
-<div id="categories" class="categories">
-<button class="category">جاري تحميل الأقسام...</button>
-</div>
-
-<div id="status" class="status">
-جاري الاتصال بقاعدة البيانات...
-</div>
-
-<section class="section">
-
-<div class="title">أحدث الإعلانات</div>
-
-<div id="ads" class="ads">
-<div class="empty">جاري تحميل الإعلانات...</div>
-</div>
-
-</section>
-
-<footer>
-مبوب بلس © 2026
-</footer>
-
+<div id="categories" class="categories" aria-label="أقسام الإعلانات"><button class="category active" data-all="true">جميع الإعلانات</button><span>جارٍ تحميل الأقسام...</span></div>
+<div id="status" class="status" role="status">جارٍ الاتصال بقاعدة البيانات...</div>
+<section class="section"><div class="title">أحدث الإعلانات</div><div id="ads" class="ads"><div class="empty">جارٍ تحميل الإعلانات...</div></div></section>
+<footer>مبوب بلس © 2026</footer>
 <script>
-
-const URL =
-"https://czubbmceykojyodxjhr.supabase.co";
-
-const KEY =
-"sb_publishable_qPdQ78gETsWWgJ50OS8NQw_T16TXrky";
-
-let allAds=[];
-
-function headers(){
-return{
-"apikey":KEY,
-"Authorization":"Bearer "+KEY
-};
-}
-
-
-async function loadCategories(){
-
-try{
-
-const r=await fetch(
-URL+"/rest/v1/categories?select=id,name&is_active=eq.true&order=name",
-{headers:headers()}
-);
-
-if(!r.ok) throw new Error("HTTP "+r.status);
-
-const data=await r.json();
-
-const box=document.getElementById("categories");
-
-box.innerHTML="";
-
-data.forEach(function(x){
-
-const b=document.createElement("button");
-
-b.className="category";
-b.textContent=x.name;
-
-b.onclick=function(){
-
-document.querySelectorAll(".category")
-.forEach(function(c){
-c.style.fontWeight="normal";
-});
-
-b.style.fontWeight="bold";
-
-showAds(
-allAds.filter(function(ad){
-return ad.category_id===x.id;
-})
-);
-
-};
-
-box.appendChild(b);
-
-});
-
-}catch(e){
-
-document.getElementById("categories").innerHTML=
-'<button class="category">تعذر تحميل الأقسام</button>';
-
-}
-
-}
-
-
-async function loadCities(){
-
-try{
-
-const r=await fetch(
-URL+"/rest/v1/cities?select=id,name&is_active=eq.true&order=name",
-{headers:headers()}
-);
-
-if(!r.ok) throw new Error("HTTP "+r.status);
-
-const data=await r.json();
-
-const select=document.getElementById("city");
-
-data.forEach(function(x){
-
-const option=document.createElement("option");
-
-option.value=x.id;
-option.textContent=x.name;
-
-select.appendChild(option);
-
-});
-
-select.onchange=function(){
-
-const id=this.value;
-
-if(!id){
-showAds(allAds);
-return;
-}
-
-showAds(
-allAds.filter(function(ad){
-return ad.city_id===id;
-})
-);
-
-};
-
-}catch(e){
-
-document.getElementById("city").innerHTML=
-'<option value="">تعذر تحميل المدن</option>';
-
-}
-
-}
-
-
-async function loadAds(){
-
-try{
-
-const r=await fetch(
-URL+
-"/rest/v1/ads?select=id,title,price,currency,description,category_id,city_id,ad_images(image_url,sort_order)&status=eq.approved&order=created_at.desc",
-{headers:headers()}
-);
-
-if(!r.ok) throw new Error("HTTP "+r.status);
-
-allAds=await r.json();
-
-showAds(allAds);
-
-document.getElementById("status").textContent=
-"تم الاتصال بنجاح — عدد الإعلانات: "+allAds.length;
-
-}catch(e){
-
-document.getElementById("status").textContent=
-"تعذر الاتصال بقاعدة البيانات";
-
-document.getElementById("ads").innerHTML=
-'<div class="empty">تعذر تحميل الإعلانات</div>';
-
-}
-
-}
-
-
-function showAds(list){
-
-const box=document.getElementById("ads");
-
-if(!list.length){
-
-box.innerHTML=
-'<div class="empty">لا توجد إعلانات في هذا القسم</div>';
-
-return;
-
-}
-
-box.innerHTML="";
-
-list.forEach(function(ad){
-
-const card=document.createElement("div");
-
-card.className="card";
-
-let image="";
-
-if(
-ad.ad_images &&
-ad.ad_images.length &&
-ad.ad_images[0].image_url
-){
-
-image=
-'<img src="'+
-escapeHtml(ad.ad_images[0].image_url)+
-'" alt="">';
-
-}else{
-
-image='<div class="noimg">مبوب بلس</div>';
-
-}
-
-card.innerHTML=
-image+
-'<div class="info">'+
-'<div class="name">'+
-escapeHtml(ad.title)+
-'</div>'+
-'<div class="price">'+
-escapeHtml(ad.price)+" "+
-escapeHtml(ad.currency)+
-'</div>'+
-'</div>';
-
-box.appendChild(card);
-
-});
-
-}
-
-
-document.getElementById("search")
-.addEventListener("input",function(){
-
-const q=this.value.toLowerCase().trim();
-
-if(!q){
-
-showAds(allAds);
-return;
-
-}
-
-showAds(
-allAds.filter(function(ad){
-
-return(
-String(ad.title||"").toLowerCase().includes(q) ||
-String(ad.description||"").toLowerCase().includes(q)
-);
-
-})
-);
-
-});
-
+'use strict';
+const SUPABASE_URL = 'https://czubbmceykojyodxjhr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_qPdQ78gETsWWgJ50OS8NQw_T16TXrky';
+const headers = {'apikey': SUPABASE_KEY, 'Accept': 'application/json'};
+let allAds = [];
+let activeCategory = '';
+let activeCity = '';
+let searchTerm = '';
 
 function escapeHtml(value){
-
-return String(value ?? "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
 }
-
-
-loadCategories();
-loadCities();
-loadAds();
-
+function setStatus(message, isError=false){
+  const el=document.getElementById('status');
+  el.textContent=message;
+  el.classList.toggle('error',isError);
+}
+async function api(path){
+  const response=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{method:'GET',headers});
+  const text=await response.text();
+  let body;
+  try{body=text ? JSON.parse(text) : null;}catch{body=text;}
+  if(!response.ok){
+    const message=body && typeof body==='object' ? (body.message || body.details || body.hint || body.code) : body;
+    throw new Error(`HTTP ${response.status}${message ? ': '+message : ''}`);
+  }
+  return body;
+}
+async function loadCategories(){
+  const box=document.getElementById('categories');
+  try{
+    const data=await api('categories?select=id,name,is_active&is_active=eq.true&order=name.asc');
+    box.innerHTML='';
+    const all=document.createElement('button');
+    all.className='category active'; all.textContent='جميع الإعلانات'; all.dataset.all='true';
+    all.addEventListener('click',()=>{activeCategory='';updateCategoryButtons();renderFilteredAds();});
+    box.appendChild(all);
+    data.forEach(item=>{
+      const button=document.createElement('button');
+      button.className='category'; button.textContent=item.name; button.dataset.category=String(item.id);
+      button.addEventListener('click',()=>{activeCategory=String(item.id);updateCategoryButtons();renderFilteredAds();});
+      box.appendChild(button);
+    });
+  }catch(error){
+    box.innerHTML='<span>تعذر تحميل الأقسام</span>';
+    setStatus('تعذر تحميل الأقسام: '+error.message,true);
+  }
+}
+function updateCategoryButtons(){
+  document.querySelectorAll('#categories .category').forEach(button=>{
+    button.classList.toggle('active',activeCategory ? button.dataset.category===activeCategory : button.dataset.all==='true');
+  });
+}
+async function loadCities(){
+  const select=document.getElementById('city');
+  try{
+    const data=await api('cities?select=id,name,is_active&is_active=eq.true&order=name.asc');
+    select.innerHTML='<option value="">جميع المدن</option>';
+    data.forEach(item=>{
+      const option=document.createElement('option'); option.value=String(item.id); option.textContent=item.name; select.appendChild(option);
+    });
+  }catch(error){
+    select.innerHTML='<option value="">تعذر تحميل المدن</option>';
+    setStatus('تعذر تحميل المدن: '+error.message,true);
+  }
+}
+async function loadAds(){
+  setStatus('جارٍ تحميل الإعلانات...');
+  try{
+    const data=await api('ads?select=id,title,price,currency,description,category_id,city_id,status,created_at,ad_images(image_url,sort_order)&status=eq.approved&order=created_at.desc&limit=100');
+    allAds=Array.isArray(data)?data:[];
+    renderFilteredAds();
+    setStatus(`تم الاتصال بقاعدة البيانات بنجاح. عدد الإعلانات المعتمدة: ${allAds.length}`);
+  }catch(error){
+    allAds=[]; renderAds([]);
+    setStatus('تعذر تحميل الإعلانات. تفاصيل الخطأ: '+error.message,true);
+  }
+}
+function renderFilteredAds(){
+  const q=searchTerm.toLocaleLowerCase('ar');
+  const filtered=allAds.filter(ad=>{
+    const matchesCategory=!activeCategory || String(ad.category_id)===activeCategory;
+    const matchesCity=!activeCity || String(ad.city_id)===activeCity;
+    const searchable=[ad.title,ad.description,ad.category,ad.city].map(v=>String(v||'').toLocaleLowerCase('ar')).join(' ');
+    const matchesSearch=!q || searchable.includes(q);
+    return matchesCategory && matchesCity && matchesSearch;
+  });
+  renderAds(filtered);
+}
+function renderAds(list){
+  const box=document.getElementById('ads');
+  if(!list.length){box.innerHTML='<div class="empty">لا توجد إعلانات مطابقة حاليًا.</div>';return;}
+  box.innerHTML='';
+  list.forEach(ad=>{
+    const card=document.createElement('article'); card.className='card';
+    const images=Array.isArray(ad.ad_images)?ad.ad_images.slice().sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)):[];
+    const imageUrl=images.find(item=>item && item.image_url)?.image_url;
+    const image=imageUrl
+      ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(ad.title||'صورة الإعلان')}" loading="lazy">`
+      : '<div class="noimg">مبوب بلس</div>';
+    const price=ad.price===null || ad.price===undefined || ad.price==='' ? 'السعر عند التواصل' : `${escapeHtml(ad.price)} ${escapeHtml(ad.currency||'درهم')}`;
+    card.innerHTML=`${image}<div class="info"><div class="name">${escapeHtml(ad.title||'إعلان بدون عنوان')}</div><div class="price">${price}</div>${ad.description ? `<p class="description">${escapeHtml(ad.description).slice(0,160)}</p>`:''}</div>`;
+    const img=card.querySelector('img');
+    if(img) img.addEventListener('error',()=>{const fallback=document.createElement('div');fallback.className='noimg';fallback.textContent='الصورة غير متاحة';img.replaceWith(fallback);},{once:true});
+    box.appendChild(card);
+  });
+}
+document.getElementById('search').addEventListener('input',event=>{searchTerm=event.target.value.trim();renderFilteredAds();});
+document.getElementById('city').addEventListener('change',event=>{activeCity=event.target.value;renderFilteredAds();});
+(async function init(){
+  await Promise.all([loadCategories(),loadCities(),loadAds()]);
+})();
 </script>
-
 </body>
 </html>
